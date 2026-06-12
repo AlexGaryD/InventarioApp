@@ -1,104 +1,161 @@
-﻿// SISTEMA DE INVENTARIO - Módulo 2 Completo
+﻿// ============================================================
+// SISTEMA DE INVENTARIO - Clase 1.1
+// Estado: Mensaje de bienvenida
+// ============================================================
+
 using System.Reflection;
 
 var assembly = Assembly.GetExecutingAssembly();
 var version = assembly.GetName().Version;
 
-int cantidadProductos = 0;
-decimal valorTotalInventario = 0.00m;
-bool sistemaActivo = true;
+MostarBanner();
 
 if (args.Length > 0)
 {
     switch (args[0].ToLower())
     {
         case "--help":
-        case "-h":
             MostrarAyuda();
             Environment.Exit(0);
             break;
+
         case "--version":
-        case "-v":
-            Console.WriteLine($"InventarioApp v{version}");
+            Console.WriteLine($"InventarioApp Version: {version}");
             Environment.Exit(0);
             break;
+            
         default:
-            Console.WriteLine($"Error: Comando '{args[0]}' no reconocido");
-            Console.WriteLine("Use --help para ver comandos disponibles.");
+            Console.WriteLine($"Error: comando desconocido '{args[0]}'");
+            Console.WriteLine("Usa --help para ver las opciones disponibles");
             Environment.Exit(2);
             break;
     }
 }
 
-MostrarBanner();
-Console.WriteLine("Comandos disponibles: listar, agregar, buscar, salir");
+int cantidadProductos = 0;
+decimal valorTotalDelInventario = 0.00m;
+bool sistemaActivo = true;
+string nombreSistema = "Sistema de Gestion de Inventario";
+
+/*
+string? nombre = null;
+int longitud = nombre.Length;
+Console.WriteLine($"La longitud del nombre es: {longitud}");
+
+// Problema: readline puede devolver null
+Console.Write("Ingrese un valor: ");
+string? entrada = Console.ReadLine();
+int? longitud = entrada?.Length;
+
+// Solucion Operador coalescing ??
+//string comando = string.IsNullOrEmpty(entrada) ? "salir" : entrada;
+string comandoLimpio = string.IsNullOrWhiteSpace(entrada) ? "salir" : entrada.Trim().ToLower();
+Console.WriteLine($"Longitud: {longitud ?? 0}");
+Console.WriteLine($"Comando: {comandoLimpio}");
+*/
+
+
+Console.WriteLine("Estado del sistema");
+Console.WriteLine($"Nombre: {nombreSistema}");
+Console.WriteLine($"Cantidad de productos registrados: {cantidadProductos}");
+Console.WriteLine($"Valor total del inventario: ${valorTotalDelInventario:N2}");
+Console.WriteLine($"Sistema activo: {(sistemaActivo ? "Si" : "No")}");
+Console.Write("Ingrese una cantidad: ");
+string? input = Console.ReadLine();
+
+
+// Conversion segura TryParse
+if (int.TryParse(input, out int cantidad))
+{
+    Console.Write($"Cantidad valida: {cantidad} \n");
+    cantidadProductos = cantidad;
+} else {
+    Console.WriteLine("Error: Dene ingresar un numero entero");
+}
+
+Console.Write("Ingrese un precio: ");
+string? inputPrecio = Console.ReadLine();
+if (decimal.TryParse(inputPrecio, out decimal precio))
+{
+    Console.Write($"Precio valido: {precio} \n");
+    valorTotalDelInventario = cantidad * precio;
+    Console.WriteLine($"Valor total del inventario: ${valorTotalDelInventario:N2}");
+} else {
+    Console.WriteLine("Error: Dene ingresar un numero decimal");
+}
+
+
+// Loop de nullabilidad
+Console.WriteLine("Comandos: listar, agregar, buscar, salir");
 Console.WriteLine();
 
 while (sistemaActivo)
 {
-    Console.Write("inventario> ");
+    Console.Write("inventario: ");
     string? entrada = Console.ReadLine();
-    string comando = entrada?.Trim().ToLower() ?? "salir";
 
+    string comando = string.IsNullOrWhiteSpace(entrada) ? "salir" : entrada.Trim().ToLower();
     switch (comando)
     {
         case "salir":
-        case "exit":
-        case "q":
+            Console.WriteLine("Saliendo del programa...");
             sistemaActivo = false;
-            Console.WriteLine("¡Hasta luego!");
             break;
         case "listar":
-            Console.WriteLine($"📦 Productos en inventario: {cantidadProductos}");
-            Console.WriteLine($"💰 Valor total: ${valorTotalInventario:N2}");
-            break;
-        case "agregar":
-            Console.WriteLine("📝 Función agregar (se implementará en Módulo 3)");
-            break;
-        case "buscar":
-            Console.WriteLine("🔍 Función buscar (se implementará en Módulo 4)");
+            Console.WriteLine($"Lista de productos: {cantidadProductos}");
             break;
         case "":
             break;
         default:
-            Console.WriteLine($"❌ Comando '{comando}' no reconocido");
-            Console.WriteLine("   Use: listar, agregar, buscar, salir");
+            Console.WriteLine($"Error: comando desconocido '{comando}'");
+            Console.WriteLine("Comandos disponibles: listar, agregar, buscar, salir");
             break;
     }
-
-    if (sistemaActivo)
-        Console.WriteLine();
 }
 
-Environment.Exit(0);
+/*
+Console.Write("Ingrese un comando o ingrese salir para terminar: ");
+string? comandoSalir = Console.ReadLine();
 
-void MostrarBanner()
+if (string.IsNullOrWhiteSpace(comandoSalir) || comandoSalir.ToLower() == "salir")
 {
-    Console.WriteLine("╔══════════════════════════════════════╗");
-    Console.WriteLine("║   SISTEMA DE GESTIÓN DE INVENTARIO   ║");
-    Console.WriteLine("╚══════════════════════════════════════╝");
+    Console.WriteLine("Saliendo del programa...");
+    Environment.Exit(0);
+}
+*/
+/*
+Console.WriteLine();
+Console.WriteLine("Estructura del proyecto:");
+Console.WriteLine("Configuracion .csproj");
+Console.WriteLine("Carpet src/ creada");
+Console.WriteLine("Metadatos configurados");
+Console.WriteLine();
+Console.WriteLine("Proximo paso: Agregar argumentos CL y configuracion de repositorio en github");
+Console.WriteLine("==========================================");
+*/
+// Funciones
+
+void MostarBanner()
+{
+    Console.WriteLine("==========================================");
+    Console.WriteLine("    SISTEMA DE GESTIÓN DE INVENTARIO      ");
+    Console.WriteLine("==========================================");
     Console.WriteLine();
-    Console.WriteLine($"Versión: {version}");
-    Console.WriteLine($".NET: {Environment.Version}");
-    Console.WriteLine($"Sistema: {Environment.OSVersion.Platform}");
+    Console.WriteLine($"Version: {version}");
+    Console.WriteLine($"Plataforma: {Environment.OSVersion}");
+    Console.WriteLine($".NET Version: {Environment.Version}");
     Console.WriteLine();
 }
 
 void MostrarAyuda()
 {
-    Console.WriteLine("USO: dotnet run [opciones]");
+    Console.WriteLine("USO: InventarioApp [comando] [opciones]");
     Console.WriteLine();
-    Console.WriteLine("OPCIONES:");
-    Console.WriteLine("  --help, -h       Muestra esta ayuda");
-    Console.WriteLine("  --version, -v    Muestra la versión");
-    Console.WriteLine();
-    Console.WriteLine("COMANDOS INTERACTIVOS:");
-    Console.WriteLine("  listar           Lista productos del inventario");
-    Console.WriteLine("  agregar          Agrega un nuevo producto");
-    Console.WriteLine("  buscar           Busca productos");
-    Console.WriteLine("  salir            Sale del programa");
+    Console.WriteLine("COMANDOS:");
+    Console.WriteLine("  --help, -h      Muestra esta ayuda");
+    Console.WriteLine("  --version, -v   Muestra la version del programa");
     Console.WriteLine();
     Console.WriteLine("EJEMPLOS:");
-    Console.WriteLine("  dotnet run");
-    Console.WriteLine("  dotnet run --version");
+    Console.WriteLine(" dotnet run -- --help");
+    Console.WriteLine(" dotnet run -- --version");
 }
